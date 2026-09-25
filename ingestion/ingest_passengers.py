@@ -3,11 +3,27 @@
 (même structure que `ingest_airports.py`, à utiliser comme modèle).
 """
 from datetime import date
+from common import fetch_csv
 
+def _snapshot_files(day : date = None, init : bool = False):
+
+    if init:
+        return[
+            ("init", "passengers_en.csv"),
+            ("init", "passengers_fr.csv"),
+        ]
+
+    assert day is not None
+    return [
+        ("2025-09", f"passengers_en_{day.isoformat()}.csv"),
+        ("2025-09", f"passengers_fr_{day.isoformat()}.csv"),
+    ]
 
 def ingest_bronze(day: date = None, init: bool = False):
     # TODO : télécharger les deux snapshots (EN et FR) du jour (ou de init/) vers bronze/.
-    raise NotImplementedError
+    
+    for subdir, filename in _snapshot_files(day, init):
+        fetch_csv(subdir, filename)
 
 
 def create_silver_table(con):
